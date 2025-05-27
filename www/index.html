@@ -3,10 +3,44 @@
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>My Web Page</title>
-            <link rel="stylesheet" href="styles.css">
+            <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Welcome to My Web Page</h1>
-        <p>This is a simple web page served by my HTTP server.</p>
+        <header>
+            <h1>Welcome to My Web Page</h1>
+            <p>This is a simple web page served by an HTTP server made in python.</p>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="report.html">Report</a></li>
+            </ul>
+        </nav>
+        <div class="card-area">
+            <div class="card">
+                <h2>Who am I?</h2>
+                <p>My name is Nicolas Tazzieri. I am a student of Computer Science and Engineering at the University of Bologna (Cesena Campus).</p>
+            <!-- Add image-->
+            </div>
+            <div class="card">
+                <h2>What is this project about?</h2>
+                <p>This project is about creating a simple HTTP server in Python that serves 3 static web pages.</p>
+                <p>This server should:</p>
+                <ul>
+                    <li>Handle basic HTTP requests</li>
+                    <li>Send 200/404 HTTP responses</li>
+                    <li>Serve static pages with animations and appropriate MIME types</li>
+                    <li>Logging requests</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>Where does the server respond?</h2>
+                <p>The server responds on <code>http://localhost:8080</code> by default. This is written in the requirements of the project. But you can change the host and port by modifying the code, if you wanted...</p>
+            </div>
+        </div>
+        <footer>
+            <p>2025 Nicolas Tazzieri</p>
+        </footer>
     </body>
 </html>
