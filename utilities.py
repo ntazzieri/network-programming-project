@@ -1,6 +1,6 @@
 # Utility functions for the HTTP server
-
 import time
+import mimetypes as mt
 
 '''
 It provides the 404 page from the file 'page404.html'.
@@ -18,4 +18,13 @@ def print_and_log(message):
     print(message)
     with open('log/server.log', 'a') as log:
         log.write(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ': ')
-        log.write(message + '\r\n')
+        log.write(message + '\n')
+
+'''
+It uses the mimetypes library to determine the MIME type of a file based on its extension.
+If the MIME type cannot be determined, it returns 'application/octet-stream', which is the default type for binary files.
+'''
+def get_mime_type(file_path):
+    print("Determining MIME type for file:", file_path)
+    mime_type, _ = mt.guess_type(file_path)
+    return mime_type if mime_type else 'application/octet-stream'
