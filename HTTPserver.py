@@ -31,9 +31,6 @@ while True:
             mime_type = get_mime_type(str(filename[1:].decode('utf-8')))
             print("MIME type determined: ", mime_type)
 
-            # Send HTTP header with OK response
-            connectionSocket.send(("HTTP/1.1 200 OK\r\nContent-Type: " + mime_type + "\r\n\r\n").encode())
-
             # To send a binary file (eg.img), distinguish between text and binary files
             if mime_type.startswith('text/'):
                 f = open(filename[1:], 'r')
@@ -41,13 +38,19 @@ while True:
                 print_and_log("Text data sent to the client:")
                 print_and_log(outputdata)
                 f.close()
+
+                # Send HTTP header with OK response
+                connectionSocket.send(("HTTP/1.1 200 OK\r\nContent-Type: " + mime_type + "\r\n\r\n").encode())
                 connectionSocket.send(outputdata.encode('utf-8'))
             else:
                 f = open(filename[1:], 'rb')
                 outputdata = f.read()
                 print_and_log("Binary data sent to the client.")
                 f.close()
-                connectionSocket.send(outputdata)
+
+                # Send HTTP header with OK response
+                connectionSocket.send(("HTTP/1.1 200 OK\r\nContent-Type: " + mime_type + "\r\n\r\n").encode())
+                connectionSocket.send(outputdata) # Send binary data directly
             connectionSocket.send("\r\n".encode())
     except IOError:
         # Send response message for file not found
