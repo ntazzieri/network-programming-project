@@ -1,12 +1,14 @@
 \documentclass[a4paper,12pt]{report}
 
 \usepackage{alltt, fancyvrb, url}
+\usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage{float}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{ifluatex}
+
 \ifluatex
   \usepackage{pdftexcmds}
   \makeatletter
@@ -20,10 +22,14 @@
 
 \usepackage[italian]{cleveref}
 
-\title{\Huge \textbf{Analisi tecnica per il \\ Progetto programmazione \\ di reti}}
+\title{\Huge \textbf{Relazione tecnica per il \\ Progetto di programmazione \\ di reti:\\}
+\vspace{0.5cm}
+\LARGE Realizzazione di un Web Server minimale in Python e pubblicazione di un sito statico
+}
 \author{
     Nicolas Tazzieri
 }
+
 
 \begin{document}
 
@@ -38,7 +44,81 @@
 
 \section{Descrizione e requisiti}
 
-\subsubsection{Requisiti funzionali}
+Il progetto ha come obiettivo la realizzazione un Web Server in Python che risponde a richieste HTTP effettuate sulla porta 8080. Il server deve essere in grado di:
+\begin{itemize}
+    \item Gestire richieste http GET.
+    \item Rispondere con 200 OK per le richieste valide (3 pagine HTML statiche) e 404 per quelle non valide.
+    \item Gestire il MIME type per i diversi tipi di file da restituire (text/html, style/css, image/img).
+    \item Effettuare il logging delle richieste.
+\end{itemize}
+
+
+\chapter{Implementazione}
+
+Il server Web è implementato in Python e utilizza le librerie standard per la gestione delle socket, del logging e dei MIME types. Il server è in ascolto sulla porta 8080 e accetta connessioni dai client. La coda di backlog è settata ad 1. Quando un client invia una richiesta HTTP, il server la riceve, la analizza e restituisce il file richiesto o una pagina di errore 404 se il file non viene trovato. Di seguito sono analizzati aspetti significativi del codice e della struttura del progetto.
+
+\section{Organizzazione dei file}
+La struttura dei file del progetto è la seguente:
+
+\begin{itemize}
+  \item \textbf{HTTPserver.py}: file principale che contiene il codice del server web.
+  \item \textbf{utilities.py}: file che contiene le funzioni di utilità per la gestione del logging, del MIME type e della lettura della 404 page.
+  \item \textbf{www/}: cartella che contiene i file statici serviti dal server (HTML, CSS, immagini).
+  \item \textbf{log/server.log}: file di log.
+\end{itemize}
+
+\section{Librerie utilizzate}
+Per la realizzazione del progetto sono state utilizzate le seguenti librerie standard di Python:
+\begin{itemize}
+    \item \textbf{socket}: utilizzata per la gestione della connessione con i client.
+    \item \textbf{time}: utilizzata per la gestione dei timestamp del logging.
+    \item \textbf{mimetypes}: utilizzata per il riconoscimento del MIME type del file richiesto dall'utente in fase di richiesta.
+\end{itemize}
+
+\section{Analisi delle parti significative del codice}
+\subsection{Gestione delle richieste HTTP}
+\label{sec:gestione-richieste-http}
+Il server è in ascolto sulla porta 8080 e accetta connessioni dai client. Quando un client invia una richiesta HTTP, il server la riceve e la analizza per determinare il file richiesto.
+
+Se la richiesta è valida, ovvero non viene lanciata l'eccezione \texttt{IOError} in caso di file mancante, il server restituisce il contenuto del file richiesto insieme a un'intestazione \textit{HTTP 200 OK}, con il MIME type corretto (Il cui funzionamento è discusso nella sezione \ref{sec:mime-types}). Se il file non viene trovato, il server restituisce un'intestazione \textit{HTTP 404 Not Found} e recupera la pagina \texttt{www/page404.html} con la funzione \texttt{get\_404\_page()} definita in \texttt{utilities.py}.
+
+\subsection{Gestione del logging}
+\label{sec:gestione-logging}
+Il server registra le richieste in un file di log \texttt{log/server.log}. Questa funzionalità è implementata nella funzione \texttt{print\_and\_log()} in \texttt{utilities.py}, che si occupa sia di scrivere le informazioni di log nel file ma anche di stamparle sul terminale.
+In particolare, il log contiene informazioni riguardanti:
+\begin{itemize}
+    \item L'indirizzo IP del client che si è connesso e ha effettuato la richiesta.
+    \item La socket.
+    \item Il mime type del file richiesto.
+    \item Il percorso del file richiesto.
+    \item La risposta inviata (\textit{200 OK} o \textit{404 Not Found}).
+    \item Chiusura della connessione.
+\end{itemize}
+Per ogni informazione stampata, viene aggiunto un timestamp per tenere traccia del momento in cui la richiesta è stata ricevuta. Questa funzionalità è implementata come la funzione \texttt{local\_time()} della libreria \texttt{time} che restituisce la data e l'ora corrente e \texttt{strftime()} che formatta il timestamp in una stringa leggibile.
+
+\subsection{Gestione dei MIME types}
+\label{sec:mime-types}
+Il server gestisce i MIME types per i diversi tipi di file da restituire. Quando un client richiede un file, il server determina il tipo di file in base all'estensione grazie alla funzione \texttt{guess\_type(path)} della libreria \texttt{mimetypes} e imposta l'intestazione \texttt{Content-Type} di conseguenza. Ad esempio, per un file HTML, l'intestazione sarà \texttt{Content-Type: text/html}. Se un file non ha un MIME type riconosciuto, il server restituisce il tipo generico \texttt{application/octet-stream}.
+Siccome il server deve aprire il file in modalità diverse prima di inviarli al client (rb $\rightarrow$ file binari, r $\rightarrow$ file di testo), prima di inviare la risposta, controlla se il tipo di file comincia con \texttt{text/}. In tal caso, il server codifica il contenuto del file in UTF-8 utilizzando la funzione \texttt{encode('utf-8')}, altrimenti lo invia direttamente.
+
+\subsection{Organizzazione delle pagine servite}
+\label{sec:organizzazione-pagine}
+Il server è configurato per servire tre pagine HTML statiche e una pagina di errore 404. Queste pagine sono organizzate nella cartella \texttt{www/} e sono accessibili tramite le seguenti URL:
+\begin{itemize}
+    \item \texttt{http://localhost:8080/www/index.html}: la pagina principale del server.
+    \item \texttt{http://localhost:8080/www/halloffame.html}: una seconda pagina HTML.
+    \item \texttt{http://localhost:8080/www/landscape.html}: una pagina che mostra un paesaggio (\textit{HG: Sunrise on the Reaping} per gli appassionati).
+    \item \texttt{http://localhost:8080/www/report.html}: pagina che contiene la relazione tecnica del progetto e un link per scaricarla.
+    \item \texttt{http://localhost:8080/page404.html}: la pagina di errore 404 che viene restituita quando il file richiesto non viene trovato.
+\end{itemize}
+A tutte le pagine HTML viene applicato il file CSS \texttt{www/style.css} per la formattazione e la gestione delle animazioni. Questo viene referenziato all'interno delle pagine HTML.
+
+
+\chapter{Conclusioni}
+\label{sec:conclusioni}
+
+\section{Riflessioni finali e commenti personali}
+La realizzazione di questo progetto mi ha sicuramente permesso di approfondire la conoscenza del protocollo HTTP e della gestione delle richieste in un server web. È stato interessante implementare la funzionalità di gestione dei MIME types, che grazie alle librerie di Python è stata semplificata notevolmente. Inoltre ciò mi ha permesso di semplificare la selezione della modalità di lettura dei file, senza fare ulteriori parsing. Ammetto che nella realizzazione delle pagine HTML mi sono sentito particolarmente ispirato, spendendo tempo un po' più di quanto fosse necessario. Però mi sono divertito a farlo e credo sia questo l'importante (oltre ad imparare ovviamente).
 
 \end{document}
 
