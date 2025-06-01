@@ -25,7 +25,7 @@ while True:
 
             # It determines the MIME type of the file based on its extension
             mime_type = get_mime_type(str(filename[1:]))
-            print("MIME type determined: ", mime_type)
+            print_and_log("MIME type determined: " + mime_type)
 
             # Distinguish between text and binary files
             if mime_type.startswith('text/'):

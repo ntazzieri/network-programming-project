@@ -25,6 +25,6 @@ It uses the mimetypes library to determine the MIME type of a file based on its 
 If the MIME type cannot be determined, it returns 'application/octet-stream', which is the default type for binary files.
 '''
 def get_mime_type(file_path):
-    print("Determining MIME type for file:", file_path)
+    print_and_log("Determining MIME type for file: " + file_path)
     mime_type, _ = mt.guess_type(file_path)
     return mime_type if mime_type else 'application/octet-stream'
