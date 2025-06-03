@@ -12,11 +12,11 @@ def get_404_page():
     return page
 
 '''
-It prints the message on console and writes it into the file 'log/server.log'.
+It prints the message on console and writes it into the file 'server.log'.
 '''
 def print_and_log(message):
     print(message)
-    with open('log/server.log', 'a') as log:
+    with open('server.log', 'a') as log:
         log.write(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ': ')
         log.write(message + '\n')
 
