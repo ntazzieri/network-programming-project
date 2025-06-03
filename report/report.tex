@@ -64,7 +64,7 @@ La struttura dei file del progetto è la seguente:
   \item \textbf{HTTPserver.py}: file principale che contiene il codice del server web.
   \item \textbf{utilities.py}: file che contiene le funzioni di utilità per la gestione del logging, del MIME type e della lettura della 404 page.
   \item \textbf{www/}: cartella che contiene i file statici serviti dal server (HTML, CSS, immagini, report).
-  \item \textbf{log/server.log}: file di log.
+  \item \textbf{server.log}: file di log.
   \item \textbf{page404.html}: pagina di errore 404 che viene restituita quando il file richiesto non viene trovato.
 \end{itemize}
 
@@ -85,7 +85,7 @@ Se la richiesta è valida, ovvero non viene lanciata l'eccezione \texttt{IOError
 
 \subsection{Gestione del logging}
 \label{sec:gestione-logging}
-Il server registra le richieste in un file di log \texttt{log/server.log}. Questa funzionalità è implementata nella funzione \texttt{print\_and\_log()} in \texttt{utilities.py}, che si occupa sia di scrivere le informazioni di log nel file ma anche di stamparle sul terminale.
+Il server registra le richieste nel file \texttt{server.log} che, se non esiste, verrà creato. Questa funzionalità è implementata nella funzione \texttt{print\_and\_log()} in \texttt{utilities.py}, che si occupa sia di scrivere le informazioni di log nel file ma anche di stamparle sul terminale.
 In particolare, il log contiene informazioni riguardanti:
 \begin{itemize}
     \item L'indirizzo IP del client che si è connesso e ha effettuato la richiesta.
@@ -107,7 +107,7 @@ Siccome il server deve aprire il file in modalità diverse prima di inviarli al 
 Il server è configurato per servire tre pagine HTML statiche e una pagina di errore 404. Queste pagine sono organizzate nella cartella \texttt{www/} e sono accessibili tramite le seguenti URL:
 \begin{itemize}
     \item \texttt{http://localhost:8080/www/index.html}: la pagina principale del server.
-    \item \texttt{http://localhost:8080/www/halloffame.html}: una seconda pagina HTML.
+    \item \texttt{http://localhost:8080/www/halloffame.html}: una pagina che contiene dei nomi e delle descrizioni.
     \item \texttt{http://localhost:8080/www/landscape.html}: una pagina che mostra un paesaggio (\textit{HG: Sunrise on the Reaping} per gli appassionati).
     \item \texttt{http://localhost:8080/www/report.html}: pagina che contiene la relazione tecnica del progetto e un link per scaricarla.
     \item \texttt{http://localhost:8080/page404.html}: la pagina di errore 404 che viene restituita quando il file richiesto non viene trovato.
@@ -115,11 +115,18 @@ Il server è configurato per servire tre pagine HTML statiche e una pagina di er
 A tutte le pagine HTML viene applicato il file CSS \texttt{www/style.css} per la formattazione e la gestione delle animazioni. Questo viene referenziato all'interno delle pagine HTML.
 
 
-\chapter{Conclusioni}
-\label{sec:conclusioni}
+\chapter{Informazioni aggiuntive}
+\label{sec:info_aggiuntive}
 
-\section{Riflessioni finali e commenti personali}
-La realizzazione di questo progetto mi ha sicuramente permesso di approfondire la conoscenza del protocollo HTTP e della gestione delle richieste in un server web. È stato interessante implementare la funzionalità di gestione dei MIME types, che grazie alle librerie di Python è stata semplificata notevolmente. Inoltre ciò mi ha permesso di semplificare la selezione della modalità di lettura dei file, senza fare ulteriori parsing. Ammetto che nella realizzazione delle pagine HTML mi sono sentito particolarmente ispirato, spendendo tempo un po' più di quanto fosse necessario. Però mi sono divertito a farlo e credo sia questo l'importante (oltre ad imparare ovviamente).
+\section{Esecuzione del server}
+è possibile eseguire il server utilizzando il comando da terminale (con python installato):
+\begin{verbatim}
+python <path>/HTTPserver.py
+\end{verbatim}
+oppure lo si può avviare in un IDE come Spyder o VScode.
+Una volta avviato, il server sarà in ascolto sulla porta 8080, e sarà possibile accedere al menu pricipale delle pagine demo servite visitando sul browser l'URL \texttt{http://localhost:8080/www/index.html}.
+\subsection{Troubleshoot}
+Un problema comune è che la pagina web non venga caricata, nonostante il server web sia in funzione e risponda correttamente alle richieste. In tal caso si provi a cancellare eventuali cookie o la cache del browser e ricaricare la pagina.
 
 \end{document}
 

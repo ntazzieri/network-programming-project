@@ -8,4 +8,7 @@ The goal of the project is to implement a web server in Python that responds to 
 - Manage the MIME type for different types of files to be returned (text/html, style/css, image/img, application/pdf).
 - Log incoming requests.
 
-*View report on report.pdf*
+*View report in report.pdf*
+
+### Troubleshooting
+A common problem is that the web page does not load, even though the web server is running and responding correctly to requests. In this case, try clearing any cookies or the browser cache and reload the page.
